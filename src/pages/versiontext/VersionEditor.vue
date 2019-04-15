@@ -19,6 +19,10 @@
                             v-model="item.config.title"
                     >
                     </el-input>
+                    <div class="handel">
+                    <el-button type="danger" icon="el-icon-delete" circle size="small" @click="deleteClick(index)"></el-button>
+                    <el-button type="danger" icon="el-icon-plus" circle size="small" @click="newVersionClick(index+1)"></el-button>
+                    </div>
                 </el-collapse-item>
             </el-collapse>
             <div>
@@ -26,7 +30,7 @@
             </div>
         </div>
 
-        <el-button type="text" @click="newVersionClick">+ 新版本</el-button>
+        <el-button type="text" @click="newVersionClick()">+ 新版本</el-button>
     </div>
 </template>
 
@@ -49,11 +53,18 @@
 
         },
         methods: {
-            newVersionClick(){
+            newVersionClick(index){
                 let newVersion={text:'',config:{activeNames: [],title:''}};
-                let lastVersionIndex=this.versions.length-1;
-                newVersion.text=this.versions[lastVersionIndex].text;
-                this.versions.push(newVersion);
+                let newIndex=this.versions.length-1;
+                if(index){
+                    console.log(index);
+                    newIndex=index-1;
+                }
+                newVersion.text=this.versions[newIndex].text;
+                this.versions.splice(newIndex+1,0,newVersion);
+            },
+            deleteClick(versionIndex){
+                this.versions.splice(versionIndex,1);
             }
         }
     }
@@ -73,5 +84,8 @@
         padding: 0px 5px 5px;
         margin-top: 10px;
     }
-
+    .handel{
+        text-align: left;
+        padding: 10px 10px 0 10px;
+    }
 </style>
