@@ -51,7 +51,7 @@
         line-height: 28px;
     }
     .lastAddVersion{
-        background-color: #e6a23c;
+        background-color: #606266;
     }
     .lastVersionInfo{
         background-color: #409eff;

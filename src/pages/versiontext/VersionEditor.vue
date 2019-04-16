@@ -22,11 +22,11 @@
                             :autosize="{ minRows: 1}"
                             resize="none"
                             placeholder="请输入版本综述"
-                            v-model="item.config.title"
+                            v-model="item.title"
                     >
                     </el-input>
                     <div class="handel">
-                    <el-button type="primary" icon="el-icon-delete" circle size="small" @click="item.config.title=''"></el-button>
+                    <el-button type="primary" icon="el-icon-delete" circle size="small" @click="item.title=''"></el-button>
                     </div>
                 </el-collapse-item>
             </el-collapse>
@@ -40,12 +40,36 @@
         </div>
 
         <el-button type="text" @click="newVersionClick()">+ 新版本</el-button>
+
+        <div class="versionFileBar">
+            <el-collapse v-model="activeNames">
+                <el-collapse-item title=" 设定文件标题" name="1">
+                    <el-input
+                            class="inputStyle"
+                            type="textarea"
+                            :autosize="{ minRows: 1}"
+                            resize="none"
+                            placeholder="请输入文件标题"
+                            v-model="title"
+                    >
+                    </el-input>
+                    <div class="handel">
+                        <el-button type="primary" icon="el-icon-delete" circle size="small" @click="title=''"></el-button>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+            <div class="fileHandel">
+                <el-button type="danger" icon="el-icon-upload" circle size="small" @click="uploadFile()"></el-button>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import {Button,Input,Collapse,CollapseItem} from 'element-ui';
     import VersionInfo from './VersionInfo';
+    import VersionStorageTool from '@/base/util/versionStorageTool.js'
+
     export default {
         name: "VersionEditor",
         components: {
@@ -59,6 +83,9 @@
             return {
                 versions:[],
                 lastInsertIndex:-1,
+                activeNames:[],
+                title:'',
+                key:null,
             }
         },
         mounted() {
@@ -102,7 +129,18 @@
                 currentItem.text='';
             },
             getNewVersionObj(){
-                return {text:'',config:{activeNames: [],title:''}};
+                return {text:'',title:'',config:{activeNames: []}};
+            },
+            uploadFile(){
+                if(this.isEmpty(this.title)){
+                    this.showMessage('文件标题必须指定!');
+                }else{
+                    if(this.isEmpty(this.key)){//新建文件
+                        this.key=new Date().getTime();
+                    }
+                    VersionStorageTool.storageItem(this.key,this.title,this.versions);
+                    this.showMessage('新建成功!');
+                }
             }
         }
     }
@@ -129,13 +167,10 @@
         text-align: right;
         padding: 10px;
     }
-    .versionInfo{
-        background-color: #f56c6c;
-        color: #ffffff;
-        height: 28px;
-        line-height: 28px;
+    .versionFileBar{
+        margin: 20px 0px;
     }
-    .lastVersionInfo{
-        background-color: #409eff;
+    .fileHandel{
+        padding: 10px;
     }
 </style>

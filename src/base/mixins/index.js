@@ -18,6 +18,9 @@ export default {
         trim(text){
             return Util.trim(text);
         },
+        isEmpty(str){
+            return str&&this.trim(str)!=''?false:true;
+        },
         clearBlank(text){
             return Util.clearBlank(text);
         },
