@@ -36,6 +36,12 @@ export default {
         isMobile(){
             return Util.isMobile();
         },
+        isNumber(){
+            return Util.isNumber();
+        },
+        ellipsisStr(value,length){
+            return Util.ellipsisStr(value,length);
+        },
         showMessage(message,type,duration){
             Message({
                 showClose: true,

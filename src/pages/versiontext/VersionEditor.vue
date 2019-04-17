@@ -3,6 +3,7 @@
         <div class="versionContent" v-for="(item,index) in versions">
             <!--<br/><div :class="getVersionInfoStyle(index)">版本 <span class="versionNumber">{{index+1}}</span> </div><br/>-->
             <br/><version-info :versionIndex="index" :versionCount="versions.length" :isLastAdd="index==lastInsertIndex"></version-info><br/>
+            <div class="versionTitle" v-if="trim(item.title)&&item.config.activeNames.length!=1">{{item.title}}</div>
             <el-input
                     class="inputStyle"
                     type="textarea"
@@ -35,15 +36,14 @@
                 <el-button type="success" icon="el-icon-plus" circle size="small" @click="newVersionClick(index+1,true)"></el-button>
             </div>
             <div>
-            {{item.config.title}}
             </div>
         </div>
-
+        <br/>
         <el-button type="text" @click="newVersionClick()">+ 新版本</el-button>
 
         <div class="versionFileBar">
             <el-collapse v-model="activeNames">
-                <el-collapse-item title=" 设定文件标题" name="1">
+                <el-collapse-item :title="getVersionFileTitle" name="1">
                     <el-input
                             class="inputStyle"
                             type="textarea"
@@ -69,6 +69,7 @@
     import {Button,Input,Collapse,CollapseItem} from 'element-ui';
     import VersionInfo from './VersionInfo';
     import VersionStorageTool from '@/base/util/versionStorageTool.js'
+    import { MessageBox } from 'element-ui';
 
     export default {
         name: "VersionEditor",
@@ -89,12 +90,43 @@
             }
         },
         mounted() {
-              this.newVersionClick();
+              this.key=this.$route.query.key;
+              if(this.key){
+                  this.title=this.$route.query.title;
+                  this.versions=VersionStorageTool.getItemByItemKey(this.key);
+              }else{
+                  this.newVersionClick();
+              }
+
+        },
+        beforeRouteLeave (to, from, next) {
+            // 导航离开该组件的对应路由时调用
+            // 可以访问组件实例 `this`
+            MessageBox.confirm('是否在离开页面前保存？', '确认信息', {
+                distinguishCancelAndClose: true,
+                confirmButtonText: '保存',
+                cancelButtonText: '放弃'
+            }).then(() => {
+               if(this.uploadFile()){
+                  next();
+               }else{//复原菜单
+                   this.$emit('resetIndex');
+               }
+            }).catch(action => {
+               next();
+            });
+
         },
         computed:{
-            getVersionInfoStyle(index){
-                return index==versions.length-1?['versionInfo','lastVersionInfo']:['versionInfo'];
-            },
+            getVersionFileTitle(){
+                let titleShow=this.title;
+                if(this.activeNames.length==1||this.isEmpty(this.title)){
+                    titleShow='设定文件标题';
+                }else {
+                    titleShow=this.ellipsisStr(titleShow,25);
+                }
+                return titleShow;
+            }
         },
         methods: {
             newVersionClick(index,copy=false){
@@ -135,12 +167,16 @@
                 if(this.isEmpty(this.title)){
                     this.showMessage('文件标题必须指定!');
                 }else{
+                    let tip='更新成功!';
                     if(this.isEmpty(this.key)){//新建文件
                         this.key=new Date().getTime();
+                        tip='新建成功!';
                     }
                     VersionStorageTool.storageItem(this.key,this.title,this.versions);
-                    this.showMessage('新建成功!');
+                    this.showMessage(tip);
+                    return true;
                 }
+                return false;
             }
         }
     }
@@ -172,5 +208,14 @@
     }
     .fileHandel{
         padding: 10px;
+    }
+    .versionTitle{
+        margin: 0 20px 10px 20px;
+        padding-bottom: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #666666;
+        border-bottom: 1px dotted red;
     }
 </style>

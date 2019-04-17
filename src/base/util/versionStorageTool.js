@@ -33,5 +33,10 @@ exports.storageItem=function(itemKey,title,json){
 }
 
 exports.getItemByItemKey=function(itemKey){
-    return localStorage.getItem(`${Constants.VERSION_ITEM_STORAGE_PREFIX}${itemKey}`);
+    let res=[];
+    let temp=localStorage.getItem(`${Constants.VERSION_ITEM_STORAGE_PREFIX}${itemKey}`);
+    if(temp){
+        res=JSON.parse(temp);
+    }
+    return res;
 }

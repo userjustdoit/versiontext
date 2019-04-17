@@ -5,6 +5,9 @@ import Vue from 'vue'
 // noinspection JSAnnotator
 import App from './App'
 
+// 引入路由
+import router from "./router.js"
+
 Vue.config.productionTip = false
 
 const Init =require('@/base/init');
@@ -15,6 +18,7 @@ Init.init(Vue);
 // noinspection JSAnnotator
 new Vue({
   el: '#app',
+  router,
   components: { App },
   template: '<App/>'
 })

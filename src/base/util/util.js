@@ -42,6 +42,20 @@ exports.isNull=function(value){
     return value==null||value=='null';
 }
 
+exports.isNumber=function(value){
+    return typeof(x) === 'number';
+}
+
+exports.ellipsisStr=function(value,maxLength){
+    let ellipsis='';
+    ellipsis=this.isNumber(value)?value.toString():value;
+    let strLen=ellipsis.length;
+    if(strLen>maxLength){
+        ellipsis=`${ellipsis.substr(0,maxLength)}...`
+    }
+    return ellipsis;
+}
+
 exports.isMobile=function(){
     let screenWidth=document.body.scrollWidth;
     return screenWidth<Constans.MOBILE_WIDTH_MAX;

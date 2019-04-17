@@ -9,8 +9,8 @@
                     background-color="#545c64"
                     text-color="#fff"
                     active-text-color="#ffd04b">
-                <el-menu-item index="1" class="menuItemStyle">列表</el-menu-item>
-                <el-menu-item index="2" class="menuItemStyle">编辑</el-menu-item>
+                <el-menu-item index="list" class="menuItemStyle">列表</el-menu-item>
+                <el-menu-item index="editor" class="menuItemStyle">编辑</el-menu-item>
                 <el-menu-item index="3" class="menuItemStyle">预览</el-menu-item>
                 <el-menu-item index="4" class="menuItemStyle" v-if="!isMobileDev">对比工具</el-menu-item>
                 <el-menu-item index="5" class="menuItemStyle" v-if="!isMobileDev">资源上传</el-menu-item>
@@ -22,16 +22,13 @@
             </el-menu>
         </el-header>
         <div class="content">
-            <ItemList ref="ItemList" v-show="activeIndex==1"/>
-            <VersionEditor ref="VersionEditor" v-show="activeIndex==2"/>
+            <router-view @resetIndex="resetIndex"></router-view>
         </div>
 
     </div>
 </template>
 
 <script>
-    import VersionEditor from './VersionEditor'
-    import ItemList from './ItemList';
     import {Menu, MenuItem, Header,Submenu} from 'element-ui';
 
     export default {
@@ -41,24 +38,34 @@
             "ElMenuItem": MenuItem,
             "ElHeader": Header,
             "ElSubmenu": Submenu,
-            VersionEditor,
-            ItemList
         },
         data() {
             return {
-                activeIndex: '2',
+                activeIndex: '',
                 isMobileDev:false,
             }
         },
         mounted() {
             this.isMobileDev=this.isMobile();
+            this.getActiveIndex();
+
+            this.bindRouterMenu();
         },
         methods: {
+            bindRouterMenu(){
+                this.$router.afterEach((to, from) => {
+                    this.resetIndex();
+                })
+            },
+            resetIndex(){
+                this.getActiveIndex();
+            },
+            getActiveIndex(){
+                this.activeIndex=this.$route.path.substr(1);
+            },
             handleSelect(index){
-                this.activeIndex=index;
-                if(this.activeIndex=='1'){
-                    this.$refs.ItemList.refresh();
-                }
+                this.activeIndex=index;//这句很重要否则activeIndex实际值不会变
+                this.$router.push({ path:index})
             },
         },
         computed: {},
