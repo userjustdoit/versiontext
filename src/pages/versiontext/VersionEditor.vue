@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="versionContent" v-for="(item,index) in versions">
-            <!--<br/><div :class="getVersionInfoStyle(index)">版本 <span class="versionNumber">{{index+1}}</span> </div><br/>-->
             <br/><version-info :versionIndex="index" :versionCount="versions.length" :isLastAdd="index==lastInsertIndex"></version-info><br/>
             <div class="versionTitle" v-if="trim(item.title)&&item.config.activeNames.length!=1">{{item.title}}</div>
             <el-input
@@ -10,6 +9,7 @@
                     :autosize="{ minRows: 5}"
                     resize="none"
                     placeholder="请输入内容"
+                    @change="contentChange"
                     v-model="item.text">
             </el-input>
             <div class="handel">
@@ -23,6 +23,7 @@
                             :autosize="{ minRows: 1}"
                             resize="none"
                             placeholder="请输入版本综述"
+                            @change="contentChange"
                             v-model="item.title"
                     >
                     </el-input>
@@ -51,6 +52,7 @@
                             resize="none"
                             placeholder="请输入文件标题"
                             v-model="title"
+                            @change="contentChange"
                     >
                     </el-input>
                     <div class="handel">
@@ -87,6 +89,7 @@
                 activeNames:[],
                 title:'',
                 key:null,
+                isUpdate:false,
             }
         },
         mounted() {
@@ -102,19 +105,23 @@
         beforeRouteLeave (to, from, next) {
             // 导航离开该组件的对应路由时调用
             // 可以访问组件实例 `this`
-            MessageBox.confirm('是否在离开页面前保存？', '确认信息', {
-                distinguishCancelAndClose: true,
-                confirmButtonText: '保存',
-                cancelButtonText: '放弃'
-            }).then(() => {
-               if(this.uploadFile()){
-                  next();
-               }else{//复原菜单
-                   this.$emit('resetIndex');
-               }
-            }).catch(action => {
-               next();
-            });
+            if(this.isUpdate){
+                MessageBox.confirm('是否在离开页面前保存？', '确认信息', {
+                    distinguishCancelAndClose: true,
+                    confirmButtonText: '保存',
+                    cancelButtonText: '放弃'
+                }).then(() => {
+                    if(this.uploadFile()){
+                        next();
+                    }else{//复原菜单
+                        this.$emit('resetIndex');
+                    }
+                }).catch(action => {
+                    next();
+                });
+            }else{
+                next();
+            }
 
         },
         computed:{
@@ -129,6 +136,9 @@
             }
         },
         methods: {
+            contentChange(){
+                this.isUpdate=true;
+            },
             newVersionClick(index,copy=false){
                 let newVersion=this.getNewVersionObj();
                 let parentIndex=this.versions.length-1;
@@ -186,6 +196,7 @@
     .inputStyle .el-textarea__inner{
         border:none;
         font-family: 'Microsoft YaHei', 微软雅黑, arial, simsun, 宋体;
+        color: #bbbbbb;
     }
     .el-collapse-item__header{
         padding-left: 10px;

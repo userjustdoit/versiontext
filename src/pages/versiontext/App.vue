@@ -14,10 +14,12 @@
                 <el-menu-item index="3" class="menuItemStyle">预览</el-menu-item>
                 <el-menu-item index="4" class="menuItemStyle" v-if="!isMobileDev">对比工具</el-menu-item>
                 <el-menu-item index="5" class="menuItemStyle" v-if="!isMobileDev">资源上传</el-menu-item>
-                <el-submenu index="6" class="menuItemStyle" v-if="isMobileDev">
+                <el-menu-item index="export_in" class="menuItemStyle" v-if="!isMobileDev">导入导出</el-menu-item>
+                <el-submenu index="7" class="menuItemStyle" v-if="isMobileDev">
                     <template slot="title">更多</template>
                     <el-menu-item index="4" class="menuItemStyle">对比工具</el-menu-item>
                     <el-menu-item index="5" class="menuItemStyle">资源上传</el-menu-item>
+                    <el-menu-item index="export_in" class="menuItemStyle">导入导出</el-menu-item>
                 </el-submenu>
             </el-menu>
         </el-header>
