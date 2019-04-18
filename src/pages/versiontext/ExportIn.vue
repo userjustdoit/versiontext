@@ -1,7 +1,8 @@
 <template>
     <div >
         <div class="content">
-            <div class="title">导出信息</div>
+            <div class="title">导出信息{{exportInfo?'-'+exportInfo.versions.length:''}}</div>
+            <div class="versionTitle" v-if="exportInfo">{{exportInfo.title}}</div>
             <el-input
                     class="inputStyle"
                     type="textarea"
@@ -11,7 +12,7 @@
                     v-model="exportText">
             </el-input>
             <div class="handel">
-                <el-button type="primary" icon="el-icon-search" size="mini">复制</el-button>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="copyExport">复制</el-button>
             </div>
         </div>
         <br/>
@@ -27,13 +28,14 @@
                     v-model="inText">
             </el-input>
             <div class="handel">
-                <el-button type="primary" icon="el-icon-search" size="mini">导入</el-button>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="importClick">导入</el-button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import VersionStorageTool from '@/base/util/versionStorageTool.js'
     import {Button,Input} from 'element-ui';
     export default {
         name: "ExportIn",
@@ -44,13 +46,56 @@
         data() {
             return {
                 exportText:'',
+                exportInfo:null,
                 inText:'',
+                key:null,
             }
         },
         mounted() {
+            this.initExport();
         },
-        methods: {},
-        computed: {},
+        methods: {
+            copyExport(){
+                this.$copyText(this.exportText).then((e)=>{
+                   this.showMessage('已复制','success');
+                }, function (e) {
+                   this.showMessage('当前环境无法调用剪切板,请手动复制');
+                })
+            },
+            initExport(){
+                this.key=this.$route.query.key;
+                if(this.key){
+                    this.title=this.$route.query.title;
+                    this.versions=VersionStorageTool.getItemByItemKey(this.key);
+                    let exportJson={};
+                    exportJson.title=this.title;
+                    exportJson.versions=this.versions;
+                    this.exportInfo=exportJson;
+                    this.exportText=JSON.stringify(exportJson);
+                }
+            },
+            importClick(){
+                if(this.isEmpty(this.inText)){
+                    this.showMessage('没有输入数据');
+                }else{
+                    try {
+                        let importJson=JSON.parse(this.inText);
+                        let title=importJson.title;
+                        let versions=importJson.versions;
+                        let key=new Date().getTime();
+                        VersionStorageTool.storageItem(key,title,versions);
+                        this.showMessage('导入成功','success');
+                        this.inText='';
+                    }catch (e) {
+                        this.showMessage('导入失败');
+                    }
+
+                }
+            }
+        },
+        computed: {
+
+        },
     }
 </script>
 
@@ -58,7 +103,7 @@
     .inputStyle .el-textarea__inner{
         border:none;
         font-family: 'Microsoft YaHei', 微软雅黑, arial, simsun, 宋体;
-        color: #bbbbbb;
+        color: #666666;
     }
 </style>
 
@@ -74,5 +119,14 @@
     }
     .handel{
         padding: 10px;
+    }
+    .versionTitle{
+        margin: 10px 20px 10px 20px;
+        padding-bottom: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #666666;
+        border-bottom: 1px dotted red;
     }
 </style>

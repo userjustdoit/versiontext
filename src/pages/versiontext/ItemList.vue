@@ -21,7 +21,8 @@
                     label="操作"
                     width="100">
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small">编辑</el-button>
+                    <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                    <el-button @click="handleExport(scope.row)" type="text" size="small">导出</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -54,8 +55,11 @@
             init(){
                 this.allItems=VersionStorageTool.getAllItemKeys();
             },
-            handleClick(data){
+            handleEdit(data){
                 this.$router.push({ path:'editor', query:{ key: data.key,title:data.title}})
+            },
+            handleExport(data){
+                this.$router.push({ path:'export_in', query:{ key: data.key,title:data.title}})
             },
         },
         computed: {},

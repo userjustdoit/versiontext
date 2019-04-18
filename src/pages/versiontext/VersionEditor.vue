@@ -1,12 +1,13 @@
 <template>
     <div>
-        <div class="versionContent" v-for="(item,index) in versions">
+        <div :ref="`editor_version_${index}`" class="versionContent" v-for="(item,index) in versions">
             <br/><version-info :versionIndex="index" :versionCount="versions.length" :isLastAdd="index==lastInsertIndex"></version-info><br/>
             <div class="versionTitle" v-if="trim(item.title)&&item.config.activeNames.length!=1">{{item.title}}</div>
             <el-input
                     class="inputStyle"
                     type="textarea"
                     :autosize="{ minRows: 5}"
+                    :ref="`textareaText${index}`"
                     resize="none"
                     placeholder="请输入内容"
                     @change="contentChange"
@@ -15,9 +16,10 @@
             <div class="handel">
                 <el-button type="primary" icon="el-icon-delete" circle size="small" @click="item.text=''"></el-button>
             </div>
-            <el-collapse v-model="item.config.activeNames">
+            <el-collapse v-model="item.config.activeNames" @change="collapseClick(item.config.activeNames,index)">
                 <el-collapse-item title=" 设定综述" name="1">
                     <el-input
+                            :ref="`textareaTitle${index}`"
                             class="inputStyle"
                             type="textarea"
                             :autosize="{ minRows: 1}"
@@ -43,9 +45,10 @@
         <el-button type="text" @click="newVersionClick()">+ 新版本</el-button>
 
         <div class="versionFileBar">
-            <el-collapse v-model="activeNames">
+            <el-collapse v-model="activeNames" @change="versionTitleInputFocus()">
                 <el-collapse-item :title="getVersionFileTitle" name="1">
                     <el-input
+                            ref="textareaVersionTitle"
                             class="inputStyle"
                             type="textarea"
                             :autosize="{ minRows: 1}"
@@ -136,6 +139,18 @@
             }
         },
         methods: {
+            collapseClick(item,index){
+                if(item.length==1){//自动聚焦
+                    this.$nextTick(()=>{
+                        this.$refs[`textareaTitle${index}`][0].$refs.textarea.focus();
+                    });
+                }
+            },
+            versionTitleInputFocus(){
+                this.$nextTick(()=>{
+                    this.$refs.textareaVersionTitle.$refs.textarea.focus();
+                });
+            },
             contentChange(){
                 this.isUpdate=true;
             },
@@ -151,6 +166,11 @@
                 let newVersionIndex=parentIndex+1;
                 this.versions.splice(newVersionIndex,0,newVersion);
                 this.lastInsertIndex=newVersionIndex;
+                this.$nextTick(()=>{
+                    //document.getElementById(`editor_version_${newVersionIndex}`).scrollIntoView();
+                    this.$refs[`textareaText${newVersionIndex}`][0].$refs.textarea.focus();
+                    this.$refs[`editor_version_${newVersionIndex}`][0].scrollIntoView();
+                });
                 this.showMessage(`版本${newVersionIndex+1} 新建!`);
             },
             deleteClick(versionIndex){
@@ -196,7 +216,7 @@
     .inputStyle .el-textarea__inner{
         border:none;
         font-family: 'Microsoft YaHei', 微软雅黑, arial, simsun, 宋体;
-        color: #bbbbbb;
+        color: #666666;
     }
     .el-collapse-item__header{
         padding-left: 10px;

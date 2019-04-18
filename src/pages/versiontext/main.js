@@ -8,6 +8,12 @@ import App from './App'
 // 引入路由
 import router from "./router.js"
 
+import VueClipboard from 'vue-clipboard2'
+
+VueClipboard.config.autoSetContainer = true // add this line
+
+Vue.use(VueClipboard)
+
 Vue.config.productionTip = false
 
 const Init =require('@/base/init');
