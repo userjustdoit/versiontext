@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>文本差异化对比</title>
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.staticPath %>/css/index.css"/>
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.staticPath %>/css/diffview.css"/>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.staticPath %>/js/diffview.js"></script>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.staticPath %>/js/difflib.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <%
+     //页面引导页
+     if(htmlWebpackPlugin.options.isIndex){
+       htmlWebpackPlugin.options.pages.forEach((page,index)=>{
+    %>
+    <br/><a href="<%=page%>"><%=`<b>${index+1}</b> ${page}`%></a><br/>
+    <%
+       });
+    }
+    %>
+  </body>
+</html>
