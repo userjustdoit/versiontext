@@ -23,6 +23,7 @@
                 <template slot-scope="scope">
                     <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
                     <el-button @click="handleExport(scope.row)" type="text" size="small">导出</el-button>
+                    <el-button @click="handleVersion(scope.row)" type="text" size="small">迭代</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -61,6 +62,9 @@
             handleExport(data){
                 this.$router.push({ path:'export_in', query:{ key: data.key,title:data.title}})
             },
+            handleVersion(data){
+                this.$router.push({ path:'history', query:{ key: data.key}})
+            }
         },
         computed: {},
     }

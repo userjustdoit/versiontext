@@ -63,9 +63,11 @@
                 })
             },
             initExport(){
-                this.key=this.$route.query.key;
-                if(this.key){
-                    this.title=this.$route.query.title;
+                let key=this.$route.query.key;
+                let title=this.$route.query.title;
+                if(key&&title){
+                    this.key=key;
+                    this.title=title;
                     this.versions=VersionStorageTool.getItemByItemKey(this.key);
                     let exportJson={};
                     exportJson.title=this.title;

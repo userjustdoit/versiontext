@@ -1,8 +1,7 @@
 <template>
     <div id="app">
         <div class="content">
-            <div class="title">原始信息{{exportInfo?'-'+exportInfo.versions.length:''}}</div>
-            <div class="versionTitle" v-if="exportInfo">{{exportInfo.title}}</div>
+            <div class="title">原始信息</div>
             <el-input
                     class="inputStyle"
                     type="textarea"
@@ -29,12 +28,13 @@
                 <el-button type="primary" icon="el-icon-search" size="mini" @click="compareClick(1)">Inline 对比</el-button>
             </div>
         </div>
-        <div v-html="compareView"> </div>
+        <div class="compareView" v-html="compareView"> </div>
     </div>
 </template>
 
 <script>
     import {Button, Input} from 'element-ui';
+    import Diff from 'diff-compare';
     export default {
         name: 'App',
         components: {
@@ -43,7 +43,8 @@
         },
         data() {
             return {
-                baseText: '11111111111111111111',
+                baseText: '11111111111111111111\n' +
+                    '222222222222222222',
                 newText:'222222222222222222',
                 compareView:'',
             }
@@ -61,17 +62,26 @@
                console.log(JSON.stringify(sm));
                let opCodes = sm.get_opcodes();
 
-               this.compareView=diffview.buildView({
-                    baseTextLines: base,
-                    newTextLines: newTxt,
-                    opcodes: opCodes,
-                    baseTextName: "Base Text",
-                    newTextName: "New Text",
-                    contextSize: null,
-                    viewType: viewType
-               }).innerHTML;
+               //又一个库能提供具体的操作信息
+               let adjustedText = Diff.build({
+                   base: this.baseText,
+                   compare: this.newText
+               })
 
-               console.log(this.compareView);
+               console.log(JSON.stringify(adjustedText));
+
+               let compareViewEl=diffview.buildView({
+                   baseTextLines: base,
+                   newTextLines: newTxt,
+                   opcodes: opCodes,
+                   baseTextName: "Base Text",
+                   newTextName: "New Text",
+                   contextSize: null,
+                   viewType: viewType
+               });
+               this.compareView=compareViewEl.outerHTML;
+
+               console.log(compareViewEl.outerHTML);
             }
         },
         computed: {},
@@ -109,13 +119,8 @@
     .handel{
         padding: 10px;
     }
-    .versionTitle{
-        margin: 10px 20px 10px 20px;
-        padding-bottom: 10px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: #666666;
-        border-bottom: 1px dotted red;
+    .compareView{
+        width: 100%;
+        overflow: auto;
     }
 </style>

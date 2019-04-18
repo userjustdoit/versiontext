@@ -14,7 +14,8 @@
                     v-model="item.text">
             </el-input>
             <div class="handel">
-                <el-button type="primary" icon="el-icon-delete" circle size="small" @click="item.text=''"></el-button>
+                <el-button  icon="el-icon-document" circle size="small" @click="copyText(item.text)"></el-button>
+                <el-button  icon="el-icon-delete" circle size="small" @click="item.text=''"></el-button>
             </div>
             <el-collapse v-model="item.config.activeNames" @change="collapseClick(item.config.activeNames,index)">
                 <el-collapse-item title=" 设定综述" name="1">
@@ -30,7 +31,7 @@
                     >
                     </el-input>
                     <div class="handel">
-                    <el-button type="primary" icon="el-icon-delete" circle size="small" @click="item.title=''"></el-button>
+                    <el-button icon="el-icon-delete" circle size="small" @click="item.title=''"></el-button>
                     </div>
                 </el-collapse-item>
             </el-collapse>
@@ -96,36 +97,7 @@
             }
         },
         mounted() {
-              this.key=this.$route.query.key;
-              if(this.key){
-                  this.title=this.$route.query.title;
-                  this.versions=VersionStorageTool.getItemByItemKey(this.key);
-              }else{
-                  this.newVersionClick();
-              }
-
-        },
-        beforeRouteLeave (to, from, next) {
-            // 导航离开该组件的对应路由时调用
-            // 可以访问组件实例 `this`
-            if(this.isUpdate){
-                MessageBox.confirm('是否在离开页面前保存？', '确认信息', {
-                    distinguishCancelAndClose: true,
-                    confirmButtonText: '保存',
-                    cancelButtonText: '放弃'
-                }).then(() => {
-                    if(this.uploadFile()){
-                        next();
-                    }else{//复原菜单
-                        this.$emit('resetIndex');
-                    }
-                }).catch(action => {
-                    next();
-                });
-            }else{
-                next();
-            }
-
+              this.initHandel();
         },
         computed:{
             getVersionFileTitle(){
@@ -139,6 +111,29 @@
             }
         },
         methods: {
+            initHandel(){
+                let key=this.$route.query.key;
+                let title=this.$route.query.title;
+                if(key&&title){
+                    this.key=key;
+                    this.title=title;
+                    this.versions=VersionStorageTool.getItemByItemKey(this.key);
+                }else{
+                    this.newVersionClick();
+                }
+            },
+            copyText(text){
+                if(this.isEmpty(text)){
+                    this.showMessage('没有内容!');
+                    return ;
+                }else{
+                    this.$copyText(text).then((e)=>{
+                        this.showMessage('已复制','success');
+                    }, function (e) {
+                        this.showMessage('当前环境无法调用剪切板,请手动复制');
+                    })
+                }
+            },
             collapseClick(item,index){
                 if(item.length==1){//自动聚焦
                     this.$nextTick(()=>{
@@ -208,7 +203,29 @@
                 }
                 return false;
             }
-        }
+        },
+        beforeRouteLeave (to, from, next) {
+            // 导航离开该组件的对应路由时调用
+            // 可以访问组件实例 `this`
+            if(this.isUpdate){
+                MessageBox.confirm('是否在离开页面前保存？', '确认信息', {
+                    distinguishCancelAndClose: true,
+                    confirmButtonText: '保存',
+                    cancelButtonText: '放弃'
+                }).then(() => {
+                    if(this.uploadFile()){
+                        next();
+                    }else{//复原菜单
+                        this.$emit('resetIndex');
+                    }
+                }).catch(action => {
+                    next();
+                });
+            }else{
+                next();
+            }
+
+        },
     }
 </script>
 

@@ -11,13 +11,13 @@
                     active-text-color="#ffd04b">
                 <el-menu-item index="list" class="menuItemStyle">列表</el-menu-item>
                 <el-menu-item index="editor" class="menuItemStyle">编辑</el-menu-item>
-                <el-menu-item index="3" class="menuItemStyle">预览</el-menu-item>
-                <el-menu-item index="4" class="menuItemStyle" v-if="!isMobileDev">对比工具</el-menu-item>
+                <el-menu-item index="history" class="menuItemStyle">版本</el-menu-item>
+                <el-menu-item index="compare" class="menuItemStyle" v-if="!isMobileDev">对比工具</el-menu-item>
                 <el-menu-item index="5" class="menuItemStyle" v-if="!isMobileDev">资源上传</el-menu-item>
                 <el-menu-item index="export_in" class="menuItemStyle" v-if="!isMobileDev">导入导出</el-menu-item>
                 <el-submenu index="7" class="menuItemStyle" v-if="isMobileDev">
                     <template slot="title">更多</template>
-                    <el-menu-item index="4" class="menuItemStyle">对比工具</el-menu-item>
+                    <el-menu-item index="compare" class="menuItemStyle">对比工具</el-menu-item>
                     <el-menu-item index="5" class="menuItemStyle">资源上传</el-menu-item>
                     <el-menu-item index="export_in" class="menuItemStyle">导入导出</el-menu-item>
                 </el-submenu>
@@ -67,7 +67,16 @@
             },
             handleSelect(index){
                 this.activeIndex=index;//这句很重要否则activeIndex实际值不会变
-                this.$router.push({ path:index})
+                let param={ path:index};
+                let queryKey=this.$route.query.key;
+                if(queryKey){
+                    param.query={key:queryKey};
+                    let title=this.$route.query.title;
+                    if(title){
+                        param.query.title=title;
+                    }
+                }
+                this.$router.push(param)
             },
         },
         computed: {},

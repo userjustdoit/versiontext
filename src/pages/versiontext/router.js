@@ -10,6 +10,8 @@ import VueRouter from "vue-router";
 import ItemList from "./ItemList.vue";
 import VersionEditor from "./VersionEditor.vue";
 import ExportIn from "./ExportIn.vue";
+import TextCompare from "./TextCompare.vue";
+import VersionHistory from "./VersionHistory.vue";
 
 // 要告诉 vue 使用 vueRouter
 Vue.use(VueRouter);
@@ -25,6 +27,12 @@ const routes = [
     },{
         path: "/export_in",
         component: ExportIn
+    },{
+        path: "/history",
+        component: VersionHistory
+    },{
+        path: "/compare",
+        component: TextCompare
     },
     {
         path: '/',
