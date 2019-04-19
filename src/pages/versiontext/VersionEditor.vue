@@ -199,6 +199,7 @@
                     }
                     VersionStorageTool.storageItem(this.key,this.title,this.versions);
                     this.showMessage(tip);
+                    this.isUpdate=false;
                     return true;
                 }
                 return false;

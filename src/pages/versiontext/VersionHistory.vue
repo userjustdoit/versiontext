@@ -34,24 +34,26 @@
             },
             initCompareView(){
                 this.versions.forEach((version,index)=>{
-                    if(index>0){
-                        let before=this.versions[index-1];
-                        let base = difflib.stringAsLines(before.text);
-                        let newTxt =difflib.stringAsLines(version.text);
-                        let sm = new difflib.SequenceMatcher(base, newTxt);
-                        let opCodes = sm.get_opcodes();
-                        let compareViewEl=diffview.buildView({
-                            baseTextLines: base,
-                            newTextLines: newTxt,
-                            opcodes: opCodes,
-                            baseTextName: `版本 ${index}`,
-                            newTextName: `版本 ${index+1}`,
-                            contextSize: null,
-                            viewType: 1
-                        });
-                        this.compareView.push(compareViewEl.outerHTML);
-                    }
+                        let baseText=index==0?'':this.versions[index-1].text;
+                        let newText= version.text;
+                        this.pushCompareViewEl(baseText,newText,`版本 ${index}`,`版本 ${index+1}`);
                 })
+            },
+            pushCompareViewEl(baseText,newText,baseTextName,newTextName){
+                let base = difflib.stringAsLines(baseText);
+                let newTxt =difflib.stringAsLines(newText);
+                let sm = new difflib.SequenceMatcher(base, newTxt);
+                let opCodes = sm.get_opcodes();
+                let compareViewEl=diffview.buildView({
+                    baseTextLines: base,
+                    newTextLines: newTxt,
+                    opcodes: opCodes,
+                    baseTextName: baseTextName,
+                    newTextName: newTextName,
+                    contextSize: null,
+                    viewType: 1
+                });
+                this.compareView.push(compareViewEl.outerHTML);
             }
         },
         computed: {},
@@ -64,5 +66,6 @@
         overflow: auto;
         text-align: left;
         margin-top: 20px;
+        word-break: break-all;
     }
 </style>

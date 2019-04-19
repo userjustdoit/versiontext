@@ -1,0 +1,45 @@
+1.文本版本编辑本地项目完成
+
+2.在此基础上适配通用的版本管理(包括API服务)--可快速移植为其他项目部署的
+  需求:
+  提交数据分为版本数据库内的数据和原系统的内的数据
+
+  客户端指明要提交版本数据库的方法:
+
+  客户端可能需要知道是否最终版以便决定在提交该版本的更新/新建时是否单独更新自己的数据库
+
+  版本的管理和原内容系统的管理区分开,最好各个系统负责自己的部分
+
+  不是每个资源都有版本--主动跳转到版本服务区进行版本的创建
+
+  public class version{
+      int resId;//资源id  pk
+      int versionId;//版本id pk
+      int createTs;//创建时间
+      int updateTs;//最后更新时间
+      String versionContent;//该版本存放的具体数据--一般为JSON
+      String versionCommit;//提交附加信息
+      String accessUrl;//资源操作地址--可以为空
+      int branchResId;//分支资源id //预留字段每个版本又可以有自己的分支--该分支也可以是多版本的
+  }
+
+  versionId=-1 :add
+  其他:update
+
+  //新增或修改某个版本
+  public int updateOrAddVersion(int resId,int versionId,String versionContent,String versionCommit,String accessUrl);
+
+  //删除某个版本
+  public boolean deleteVersion(int resId,int versionId);
+
+  //获取资源的全部版本
+  public List<version> getAllVersions(int resId);
+
+  //获取单个版本资源的内容
+  public version getVersionContent(int resId,int versionId);
+
+  API接口
+
+
+3.tree编辑服务移植
+
