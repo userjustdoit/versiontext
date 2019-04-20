@@ -23,6 +23,18 @@
       int branchResId;//分支资源id //预留字段每个版本又可以有自己的分支--该分支也可以是多版本的
   }
 
+    CREATE TABLE version(
+         resId INTEGER,
+         versionId INTEGER,
+         createTs INTEGER,
+         updateTs INTEGER,
+         versionContent TEXT,
+         versionCommit VARCHAR(255),
+         accessUrl VARCHAR(255),
+         branchResId INTEGER,
+         PRIMARY KEY (resId,versionId)
+    );
+
   versionId=-1 :add
   其他:update
 
@@ -36,7 +48,7 @@
   public List<version> getAllVersions(int resId);
 
   //获取单个版本资源的内容
-  public version getVersionContent(int resId,int versionId);
+  public version getVersion(int resId,int versionId);
 
   API接口
 

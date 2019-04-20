@@ -38,6 +38,12 @@
                         let newText= version.text;
                         this.pushCompareViewEl(baseText,newText,`版本 ${index}`,`版本 ${index+1}`);
                 })
+                let versionLength=this.versions.length;
+                if(versionLength>1){//最后一个版本
+                    let baseText=this.versions[versionLength-1].text;
+                    let newText=baseText;
+                    this.pushCompareViewEl(baseText,newText,'end','end');
+                }
             },
             pushCompareViewEl(baseText,newText,baseTextName,newTextName){
                 let base = difflib.stringAsLines(baseText);
