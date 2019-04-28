@@ -36,6 +36,13 @@
                 </el-collapse-item>
             </el-collapse>
             <div class="handel">
+                <el-switch
+                        v-model="item.isFirst"
+                        active-color="#13ce66"
+                        :disabled="isMobileDev"
+                        inactive-color="#ff4949"
+                        @change="contentChange">
+                </el-switch>
                 <el-button type="danger" icon="el-icon-close" circle size="small" @click="deleteClick(index)"></el-button>
                 <el-button type="success" icon="el-icon-plus" circle size="small" @click="newVersionClick(index+1,true)"></el-button>
             </div>
@@ -75,7 +82,7 @@
     import {Button,Input,Collapse,CollapseItem} from 'element-ui';
     import VersionInfo from './VersionInfo';
     import VersionStorageTool from '@/base/util/versionStorageTool.js'
-    import { MessageBox } from 'element-ui';
+    import { MessageBox,Switch} from 'element-ui';
 
     export default {
         name: "VersionEditor",
@@ -85,6 +92,7 @@
             "ElInput":Input,
             "ElCollapse": Collapse,
             "ElCollapseItem": CollapseItem,
+            "ElSwitch": Switch,
         },
         data(){
             return {
@@ -98,6 +106,7 @@
         },
         mounted() {
               this.initHandel();
+              this.shortKeyHandel();
         },
         computed:{
             getVersionFileTitle(){
@@ -111,6 +120,14 @@
             }
         },
         methods: {
+            shortKeyHandel(){
+                document.onkeydown = (oEvent) => {
+                    if (oEvent.ctrlKey && oEvent.keyCode == 83) {
+                        this.uploadFile();
+                        oEvent.preventDefault();
+                    }
+                }
+            },
             initHandel(){
                 let key=this.$route.query.key;
                 let title=this.$route.query.title;
@@ -186,7 +203,7 @@
                 currentItem.text='';
             },
             getNewVersionObj(){
-                return {text:'',title:'',config:{activeNames: []}};
+                return {text:'',title:'',isFirst:false,config:{activeNames: []}};
             },
             uploadFile(){
                 if(this.isEmpty(this.title)){
